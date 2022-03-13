@@ -1,11 +1,12 @@
-import Canvas from "./components/atoms/canvas";
+import React from 'react';
+import Canvas from './components/atoms/canvas';
 function App() {
-  return (
-    <div className="App">
-      App ...
-      <Canvas />
-    </div>
-  );
+	return (
+		<div className="App">
+			App ...
+			<Canvas />
+		</div>
+	);
 }
 
 export default App;
