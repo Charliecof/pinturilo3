@@ -10,8 +10,8 @@ export default function index() {
 					<Canvas />
 				</div>
 				<div className="col">
-                    <input type="text" className="form-control m-5" />
-                </div>
+					<input type="text" className="form-control m-5" />
+				</div>
 			</div>
 		</div>
 	);
