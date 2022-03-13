@@ -6,3 +6,8 @@ input[type=range][orient=vertical]
     height: 175px;
     padding: 0 5px;
 }
+
+.btn-tool{
+    border: 2px solid #ccc;
+    padding: 8px;
+}

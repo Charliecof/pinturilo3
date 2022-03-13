@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { FaEraser, FaPencilAlt } from 'react-icons/fa';
 import './styles.css';
 export default function Canvas() {
 	const canvasRef = useRef(null);
 	const contextRef = useRef(null);
 	const [isDrawing, setDrawing] = useState(false);
 	const [color, setColor] = useState('black');
+	const [width, setWidth] = useState(1);
+	const [tool, setTool] = useState('pencil');
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		canvas.width = 1000;
@@ -16,7 +19,7 @@ export default function Canvas() {
 		context.scale(2, 2);
 		context.lineCap = 'round';
 		context.strokeStyle = 'black';
-		context.lineWidth = 1;
+		context.lineWidth = width;
 		contextRef.current = context;
 	}, []);
 
@@ -38,15 +41,25 @@ export default function Canvas() {
 		}
 		return;
 	};
+	const selectErase = () => {
+		contextRef.current.strokeStyle = '#ffffff';
+		setTool('eraser');
+	};
+
+	const selectPencil =()=>{
+		contextRef.current.strokeStyle = color;
+		setTool('pencil');
+	}
 
 	const changeColor = (e) => {
 		setColor(() => e.target.value);
 		contextRef.current.strokeStyle = color;
 	};
 
-	const changeWidth = (e)=>{
+	const changeWidth = (e) => {
 		contextRef.current.lineWidth = e.target.value;
-	}
+		setWidth(e.target.value);
+	};
 
 	return (
 		<div className="d-flex">
@@ -63,9 +76,29 @@ export default function Canvas() {
 					min="1"
 					className="m-4"
 					orient="vertical"
+					value={width}
 					onChange={changeWidth}
 				/>
-				<button className=''></button>
+				<button
+					onClick={selectPencil}
+					className={
+						tool === 'pencil'
+							? 'btn btn-tool m-2 disabled'
+							: 'btn btn-tool m-2'
+					}
+				>
+					<FaEraser />
+				</button>
+				<button
+					onClick={selectErase}
+					className={
+						tool === 'eraser'
+							? 'btn btn-tool m-2 disabled'
+							: 'btn btn-tool m-2'
+					}
+				>
+					<FaPencilAlt />
+				</button>
 			</div>
 			<canvas
 				style={{ border: '2px solid #ccc' }}
