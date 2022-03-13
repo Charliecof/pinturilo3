@@ -1,12 +1,9 @@
 import React from 'react';
-import Canvas from './components/atoms/canvas';
-function App() {
+import Game from './components/pages/Game';
+export default function App() {
 	return (
-		<div className="App">
-			App ...
-			<Canvas />
+		<div className="app">
+			<Game />
 		</div>
 	);
 }
-
-export default App;

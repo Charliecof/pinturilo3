@@ -1,0 +1,8 @@
+body {
+    margin: 0;
+   padding: 0;
+   height: 650px;
+   width: 100%;
+   background: linear-gradient(rgba(255, 255, 255, .3), rgba(255, 255, 255, .3)),
+    url("https://images.pexels.com/photos/1363876/pexels-photo-1363876.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
+}
