@@ -1,9 +1,9 @@
-import Canvas from "./components/atoms/canvas";
+import React from "react";
+import Game from './components/pages/Game';
 function App() {
   return (
-    <div className="App">
-      App ...
-      <Canvas />
+    <div className="app">
+      <Game />
     </div>
   );
 }
