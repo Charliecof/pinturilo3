@@ -1,5 +1,4 @@
-input[type=range][orient=vertical]
-{
+input[type="range"][orient="vertical"] {
     writing-mode: bt-lr; /* IE */
     -webkit-appearance: slider-vertical; /* Chromium */
     width: 8px;
@@ -7,7 +6,19 @@ input[type=range][orient=vertical]
     padding: 0 5px;
 }
 
-.btn-tool{
+.btn-tool {
     border: 2px solid #ccc;
     padding: 8px;
+}
+
+canvas {
+    border-radius: 4px;
+}
+
+.my-canvas {
+    border: 4px solid #0e4965;
+    border-radius: 30px;
+    padding: 30px;
+    margin: 10px;
+    background-color: #fff;
 }
