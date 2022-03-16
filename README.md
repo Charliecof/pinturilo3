@@ -3,7 +3,9 @@
 
 ## Development
 
-- Para activar el servidor de desarrollo: `npm start`
+- Para activar el servidor de desarrollo: 
+  1. `npm install`
+  2. `npm start`
 - Para desplegar la app:  `npm run build`
 
 
