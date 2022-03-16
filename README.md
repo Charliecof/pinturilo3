@@ -1,5 +1,8 @@
 # Pinturillo clone
 
+## Preview
+
+![image](https://user-images.githubusercontent.com/39030799/158627100-1b3cc5a1-7ad0-46de-a63e-2b1f446dea1c.png)
 
 ## Development
 
