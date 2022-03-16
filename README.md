@@ -19,5 +19,9 @@
 
 https://docs.google.com/document/d/1mBcYbvOzKO4KWH1YByzKwREhcWL_ZdcH8aN7wklyExk/edit?usp=sharing
 
+### Plan de riesgos
+
+https://docs.google.com/document/d/1t3BvFkoI9hoge5YbDReZhSkZoooeh5_y4e98nKWlvmY/edit?usp=sharing
+
 ### Arquitectura del proyecto
 ![Arquitecture](https://user-images.githubusercontent.com/39030799/158623235-7f623324-4627-4548-8acb-25b45009efd0.png)
