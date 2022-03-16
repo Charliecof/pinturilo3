@@ -1,4 +1,9 @@
+*{
+    font-family: 'Finger Paint', cursive;
+}
+
 .app{
+    background-color: #5D5D5D ;
     height: 100vh;
     width: 100%;
 }
