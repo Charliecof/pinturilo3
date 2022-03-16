@@ -11,14 +11,9 @@ input[type="range"][orient="vertical"] {
     padding: 8px;
 }
 
-canvas {
-    border-radius: 4px;
-}
-
 .my-canvas {
-    border: 4px solid #0e4965;
-    border-radius: 30px;
-    padding: 30px;
+    /* border: 4px solid #0e4965; */
+    border-radius: 30px 30px 0 0;
     margin: 10px;
     background-color: #fff;
 }
