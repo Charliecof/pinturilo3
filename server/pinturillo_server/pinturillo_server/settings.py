@@ -48,6 +48,12 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = 'pinturillo_server.asgi.application'
 
+CHANNEL_LAYERS={
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
