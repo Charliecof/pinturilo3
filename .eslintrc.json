@@ -23,6 +23,7 @@
         }
     },
     "rules": {
-        "indent": ["error","tab"]
+        "indent": ["error","tab"],
+        "react/prop-types": 0
     }
 }

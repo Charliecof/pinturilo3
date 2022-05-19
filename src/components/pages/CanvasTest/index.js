@@ -11,6 +11,11 @@ export default function CanvasTest() {
 		console.log(data);
 	}
 
+	gameSocket.onopen = function(e){
+		alert('Connection opened')
+		console.log(e);
+	}
+
 	useEffect(() => {
 		/* if(drawing){
 			gameSocket.send(JSON.stringify({
