@@ -6,3 +6,15 @@ body {
    background: linear-gradient(rgba(255, 255, 255, .3), rgba(255, 255, 255, .3)),
     url("https://images.pexels.com/photos/1363876/pexels-photo-1363876.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
 }
+
+.buttonSubmit {
+	/* background: rgb(0, 255, 81);
+	background: linear-gradient(
+		90deg,
+		rgba(0, 255, 81, 1) 0%,
+		rgba(23, 102, 173, 1) 100%
+	); */
+	border: none;
+	width: 100%;
+	/* color: #fff; */
+}

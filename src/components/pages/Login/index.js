@@ -1,66 +1,51 @@
-import React from 'react';
+import React from "react";
+import PropTypes from 'prop-types';
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { schema } from "../../../utils/loginSchema";
+import './styles.css'
 
-import './styles.css';
-
-const Login = () => {
-
-
+const Login = ({ handleSubmit }) => {
 	return (
-		<article className="">
-			<main className="hola">
-				<div className="measure">
-					<fieldset id="login" className="">
-						<legend className="f2 fw6 ph0 mh0 center">
-							Log In
-						</legend>
-						<div className="mt3">
-							<label
-								className=""
-								htmlFor="email"
-							>
-								Email
-							</label>
-							<input
-								className="form-control"
-								type="email"
-								name="email"
-								id="email"
-							/>
-						</div>
-						<div className="mv3">
-							<label
-								className=""
-								htmlFor="password"
-							>
-								Password
-							</label>
-							<input
-								className="form-control"
-								type="password"
-								name="password"
-								id="password"
-							/>
-						</div>
-					</fieldset>
-					<div className="">
-						<input
-							className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
-							type="submit"
-							value="Log in"
-						/>
-					</div>
-					<div className="lh-copy mt3">
-						<input
-							className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
-							type="submit"
-							value="Register"
-							
-						/>
-					</div>
-				</div>
-			</main>
-		</article>
+		<Formik
+			validationSchema={schema}
+			initialValues={{
+				email: "",
+				password: "",
+			}}
+			onSubmit={(values) => handleSubmit(values)}
+		>
+			<Form>
+				<label className="form-label">Email:</label>
+				<Field
+					type="mail"
+					name="email"
+					className="form-control"
+					placeholder="Email"
+				/>
+				<ErrorMessage name="email">
+					{(errorMessage) => <p className="text-danger">{errorMessage}</p>}
+				</ErrorMessage>
+
+				<label className="form-label">Password: </label>
+				<Field
+					type="password"
+					name="password"
+					className="form-control"
+					placeholder="********"
+				/>
+				<ErrorMessage name="password">
+					{(errorMessage) => <p className="text-danger">{errorMessage}</p>}
+				</ErrorMessage>
+				<button type="submit" className="btn btn-primary mt-4 buttonSubmit">
+					Log In
+				</button>
+			</Form>
+		</Formik>
 	);
 };
 
 export default Login;
+
+Login.propTypes = {
+	handleSubmit: PropTypes.func
+}
