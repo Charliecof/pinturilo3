@@ -4,6 +4,7 @@ import Game from './components/pages/Game';
 import CanvasTest from "./components/pages/CanvasTest";
 import "./style.css";
 import Login from "./components/pages/Login";
+import Register from "./components/pages/Register";
 import { getToken } from "./utils/actionsAPI";
 
 export default function App() {
@@ -29,7 +30,22 @@ export default function App() {
 						</div>
 					</div>
 				} />
-				<Route path="/socketTest" element={<CanvasTest/>}/>
+				<Route path="/register" element={
+					<div className="p-5">
+						<h2 className="text-center" style={{color: "#fff"}}>Register</h2>
+						<div className="card p-4">
+							<Register/>
+						</div>
+					</div>
+				} />
+				<Route path="/" element={
+					<div className="">
+						<h2 className="text-center" style={{color:"#fff"}}>On real time canvas under Development</h2>
+						<div className="d-flex justify-content-center ">
+							<CanvasTest/>
+						</div>
+					</div>
+				}/>
 				<Route path="/game" element={<Game />}/>
 			</Routes>
 		</div>

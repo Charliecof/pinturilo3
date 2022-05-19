@@ -1,36 +1,31 @@
-import React,{useRef,useEffect,useState} from 'react';
+import React,{useRef} from 'react';
 import CanvasDraw from 'react-canvas-draw';
 
 export default function CanvasTest() {
-	const [drawing/* setDrawing */] = useState(null)
+	/* const [drawing, setDrawing] = useState(null) */
 	const canvas = useRef(null);
 	let url = `ws://localhost:8000/ws/socket-server/`;
 	const gameSocket = new WebSocket(url);
 	gameSocket.onmessage = (e)=>{
+		console.log('message Received');
 		let data = JSON.parse(e.data);
-		console.log(data);
+		console.log(data.message,'data');
+		if(data.type=='canvasReceive' || data.message!==undefined){
+			canvas.current.loadSaveData(data.message,true)	
+		}
 	}
 
-	gameSocket.onopen = function(e){
+	/* gameSocket.onopen = function(e){
 		alert('Connection opened')
 		console.log(e);
-	}
-
-	useEffect(() => {
-		/* if(drawing){
-			gameSocket.send(JSON.stringify({
-				'message': drawing
-			}))
-		} */
-		
-	}, [drawing]);
+	} */
 
 	const handleChange = ()=>{
-		/* const aux = canvas.current.getSaveData(); */
-		/* setDrawing(aux); */
 		gameSocket.send(JSON.stringify({
-			'message': canvas.current.getSaveData()
+			'message': canvas.current.getSaveData(),
+			'type': 'canvasSend'
 		}))
+		console.log('changing');
 	}
 	return (
 		<div>
