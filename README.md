@@ -1,10 +1,10 @@
 # Pinturillo clone
 
 ## Avances 2 parcial
-- [x]Servidor en tiempo real
-- [x]Autenticacion
-- [x]Modelos para el juego
-- [x]Actualmente esta desactivada la funcionalidad de Websockets en el servidor de pruebas por algunos bugs que hacen que se sobrecargue el servidor 
+- [x] Servidor en tiempo real
+- [x] Autenticacion
+- [x] Modelos para el juego
+- [x] Actualmente esta desactivada la funcionalidad de Websockets en el servidor de pruebas por algunos bugs que hacen que se sobrecargue el servidor 
 
 
 ## Preview
