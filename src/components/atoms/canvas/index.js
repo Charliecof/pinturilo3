@@ -3,21 +3,27 @@ import PropTypes from 'prop-types';
 import { FaEraser, FaPencilAlt } from 'react-icons/fa';
 import Counter from '../../Counter';
 import './styles.css';
-export default function Canvas({objeto}) {
+import socketIOClient from 'socket.io-client';
+
+const ENDPOINT = 'http://localhost:4000';
+
+export default function Canvas({ objeto }) {
 	const canvasRef = useRef(null);
 	const contextRef = useRef(null);
 	const [isDrawing, setDrawing] = useState(false);
 	const [color, setColor] = useState('black');
 	const [width, setWidth] = useState(1);
 	const [tool, setTool] = useState('pencil');
+	const [socket, setSocket] = useState(null);
+	const [position, setPosition] = useState({ x: 0, y: 0 });
+
 	useEffect(() => {
 		const canvas = canvasRef.current;
-		canvas.style.width = '93.5%'
+		canvas.style.width = '93.5%';
 		const ancho = window.getComputedStyle(canvas).width;
-		const alto =window.getComputedStyle(canvas).height;
-		canvas.width = parseInt(ancho.substring(0,ancho.length-2))*2; 
-		canvas.height = parseInt(alto.substring(0,alto.length-2))*2; 
-		console.log(ancho.substring(0,ancho.length-2),alto.substring(0,alto.length-2)); 	
+		const alto = window.getComputedStyle(canvas).height;
+		canvas.width = parseInt(ancho.substring(0, ancho.length - 2)) * 2;
+		canvas.height = parseInt(alto.substring(0, alto.length - 2)) * 2;
 		const context = canvas.getContext('2d');
 		context.scale(2, 2);
 		context.lineCap = 'round';
@@ -26,46 +32,92 @@ export default function Canvas({objeto}) {
 		contextRef.current = context;
 	}, []);
 
+	const drawLine = (x0, y0, x1, y1, color, brush_width, emit) => {
+		contextRef.current.beginPath();
+		contextRef.current.moveTo(x0, y0);
+		contextRef.current.lineTo(x1, y1);
+		contextRef.current.strokeStyle = color;
+		contextRef.current.lineWidth = brush_width;
+		console.log(color, brush_width);
+		contextRef.current.stroke();
+		contextRef.current.closePath();
+		if (emit) {
+			socket.emit('drawingSend', {
+				x0: x0,
+				y0: y0,
+				x1: x1,
+				y1: y1,
+				color: color,
+				brush_width: brush_width,
+			});
+		}
+	};
+
+	useEffect(() => {
+		const socketAux = socketIOClient(ENDPOINT);
+		socketAux.on('connection', (socket) => console.log(socket));
+		socketAux.on('draw', () => console.log('dibujando'));
+		socketAux.on('otherData', (data) => {
+			drawLine(
+				data.x0,
+				data.y0,
+				data.x1,
+				data.y1,
+				data.color,
+				data.brush_width
+			);
+		});
+		setSocket(socketAux);
+		return () => socketAux.close();
+	}, [setSocket]);
+
 	const startDrawing = ({ nativeEvent }) => {
 		const { offsetX, offsetY } = nativeEvent;
-		contextRef.current.beginPath();
-		contextRef.current.moveTo(offsetX, offsetY);
+		setPosition({ x: offsetX, y: offsetY });
 		setDrawing(true);
 	};
+
 	const finishDrawing = () => {
-		contextRef.current.closePath();
 		setDrawing(false);
 	};
+
 	const draw = ({ nativeEvent }) => {
 		if (isDrawing) {
 			const { offsetX, offsetY } = nativeEvent;
-			contextRef.current.lineTo(offsetX, offsetY);
+			drawLine(
+				position.x,
+				position.y,
+				offsetX,
+				offsetY,
+				color,
+				width,
+				true
+			);
 			contextRef.current.stroke();
+			socket.emit('drawing', { x: offsetX, y: offsetY });
+			setPosition({ x: offsetX, y: offsetY });
 		}
 		return;
 	};
+
 	const selectErase = () => {
-		contextRef.current.strokeStyle = '#ffffff';
 		setTool('eraser');
 	};
 
 	const selectPencil = () => {
-		contextRef.current.strokeStyle = color;
 		setTool('pencil');
 	};
 
 	const changeColor = (e) => {
 		setColor(() => e.target.value);
-		contextRef.current.strokeStyle = color;
 	};
 
 	const changeWidth = (e) => {
-		contextRef.current.lineWidth = e.target.value;
 		setWidth(e.target.value);
 	};
 
 	return (
-		<div className="my-canvas" style={{height:'100%'}}>
+		<div className="my-canvas" style={{ height: '100%' }}>
 			<div
 				style={{
 					width: '100%',
@@ -73,17 +125,20 @@ export default function Canvas({objeto}) {
 					height: '10%',
 					borderRadius: '25px 25px 0 0',
 					textAlign: 'center',
-					color:'#fff',
-					fontSize:"30px"
+					color: '#fff',
+					fontSize: '30px',
 				}}
 				className="d-flex justify-content-around"
-			>	
+			>
 				<Counter time={22} />
 				<p className="p-3">{objeto}</p>
 				<div></div>
 			</div>
-			<div className="d-flex" style={{height:'90%'}}>
-				<div className="d-flex flex-column cont-canvas" style={{backgroundColor:'#FFF25A'}}>
+			<div className="d-flex" style={{ height: '90%' }}>
+				<div
+					className="d-flex flex-column cont-canvas"
+					style={{ backgroundColor: '#FFF25A' }}
+				>
 					<input
 						className="form-control form-control-color"
 						type="color"
@@ -121,7 +176,7 @@ export default function Canvas({objeto}) {
 					</button>
 				</div>
 				<canvas
-					style={{ border: '3px solid #ccc',width:'100%' }}
+					style={{ border: '3px solid #ccc', width: '100%' }}
 					ref={canvasRef}
 					onMouseDown={startDrawing}
 					onMouseUp={finishDrawing}
@@ -134,5 +189,5 @@ export default function Canvas({objeto}) {
 }
 
 Canvas.propTypes = {
-	objeto:  PropTypes.string.isRequired
+	objeto: PropTypes.string.isRequired,
 };

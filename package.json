@@ -7,6 +7,8 @@
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
+    "fabric": "^4.6.0",
+    "fabricjs-react": "^1.0.8",
     "formik": "^2.2.9",
     "react": "^17.0.2",
     "react-canvas-draw": "^1.2.1",
