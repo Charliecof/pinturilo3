@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import django
+from django.utils.encoding import force_str
+django.utils.encoding.force_text = force_str
 from datetime import timedelta
 from pathlib import Path
 from telnetlib import AUTHENTICATION
