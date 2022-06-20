@@ -13,7 +13,7 @@ import { Formik, Form, Field } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
 
-const ENDPOINT = 'http://localhost:4000';
+const ENDPOINT = 'http://194.195.219.130:4000';
 const SAVE_DRAWING = gql`
 	mutation SaveDrawing($name: String!, $data: String!) {
 		createDrawing(name: $name, data: $data) {
