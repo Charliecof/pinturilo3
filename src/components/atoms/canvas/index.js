@@ -1,22 +1,47 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaEraser, FaPencilAlt } from 'react-icons/fa';
-import Counter from '../../Counter';
 import './styles.css';
 import socketIOClient from 'socket.io-client';
+import Button from 'react-bootstrap/Button';
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
+import SweetAlert from 'sweetalert2/dist/sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
+import Modal from 'react-bootstrap/Modal';
+import { Formik, Form, Field } from 'formik';
+import { useNavigate } from 'react-router-dom';
+
 
 const ENDPOINT = 'http://localhost:4000';
+const SAVE_DRAWING = gql`
+	mutation SaveDrawing($name: String!, $data: String!) {
+		createDrawing(name: $name, data: $data) {
+			drawing {
+				id
+				name
+				data
+				owner {
+					username
+				}
+			}
+		}
+	}
+`;
 
-export default function Canvas({ objeto }) {
+export default function Canvas({ objeto, roomID, message, setMessages }) {
+	const [saveDrawing, { loading, error, data }] = useMutation(SAVE_DRAWING);
 	const canvasRef = useRef(null);
 	const contextRef = useRef(null);
 	const [isDrawing, setDrawing] = useState(false);
+	const [prevColor, setPrevColor] = useState('black');
 	const [color, setColor] = useState('black');
 	const [width, setWidth] = useState(1);
 	const [tool, setTool] = useState('pencil');
 	const [socket, setSocket] = useState(null);
 	const [position, setPosition] = useState({ x: 0, y: 0 });
-
+	const [modal,setModal] = useState(false);
+	const navigate = useNavigate()
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		canvas.style.width = '93.5%';
@@ -32,6 +57,10 @@ export default function Canvas({ objeto }) {
 		contextRef.current = context;
 	}, []);
 
+	useEffect(() => {
+		if (socket) socket.emit('chat', { room: roomID, message: message });
+	}, [message]);
+
 	const drawLine = (x0, y0, x1, y1, color, brush_width, emit) => {
 		contextRef.current.beginPath();
 		contextRef.current.moveTo(x0, y0);
@@ -43,20 +72,30 @@ export default function Canvas({ objeto }) {
 		contextRef.current.closePath();
 		if (emit) {
 			socket.emit('drawingSend', {
-				x0: x0,
-				y0: y0,
-				x1: x1,
-				y1: y1,
-				color: color,
-				brush_width: brush_width,
+				canvasData: {
+					x0: x0,
+					y0: y0,
+					x1: x1,
+					y1: y1,
+					color: color,
+					brush_width: brush_width,
+				},
+				room: roomID,
 			});
 		}
 	};
 
 	useEffect(() => {
 		const socketAux = socketIOClient(ENDPOINT);
-		socketAux.on('connection', (socket) => console.log(socket));
+		socketAux.emit('join', roomID);
 		socketAux.on('draw', () => console.log('dibujando'));
+		socketAux.on('receiveChat', (data) => {
+			console.log('Chat', data);
+			setMessages((prev) => {
+				prev = [...prev, { message: data.message, user: data.user }];
+				return prev;
+			});
+		});
 		socketAux.on('otherData', (data) => {
 			drawLine(
 				data.x0,
@@ -70,6 +109,10 @@ export default function Canvas({ objeto }) {
 		setSocket(socketAux);
 		return () => socketAux.close();
 	}, [setSocket]);
+
+	useEffect(()=>{
+		console.log(loading,error,data);
+	},[data])
 
 	const startDrawing = ({ nativeEvent }) => {
 		const { offsetX, offsetY } = nativeEvent;
@@ -102,10 +145,13 @@ export default function Canvas({ objeto }) {
 
 	const selectErase = () => {
 		setTool('eraser');
+		setPrevColor(color);
+		setColor('#fff');
 	};
 
 	const selectPencil = () => {
 		setTool('pencil');
+		setColor(prevColor);
 	};
 
 	const changeColor = (e) => {
@@ -114,6 +160,22 @@ export default function Canvas({ objeto }) {
 
 	const changeWidth = (e) => {
 		setWidth(e.target.value);
+	};
+
+	const saveCanvasData = async (values) => {
+		try {
+			const dataURL = canvasRef.current.toDataURL();
+			values.data=dataURL
+			await saveDrawing({ variables: values });
+		} catch (error) {
+			await SweetAlert.fire({
+				position: 'top-end',
+				icon: 'error',
+				title: 'Server Error',
+				showConfirmButton: false,
+				timer: 1500,
+			});
+		}
 	};
 
 	return (
@@ -128,11 +190,12 @@ export default function Canvas({ objeto }) {
 					color: '#fff',
 					fontSize: '30px',
 				}}
-				className="d-flex justify-content-around"
+				className="d-flex justify-content-around align-items-center"
 			>
-				<Counter time={22} />
 				<p className="p-3">{objeto}</p>
-				<div></div>
+				<div>
+					<Button onClick={()=>setModal(true)}>Save Drawing</Button>
+				</div>
 			</div>
 			<div className="d-flex" style={{ height: '90%' }}>
 				<div
@@ -184,6 +247,58 @@ export default function Canvas({ objeto }) {
 					id="canvas"
 				/>
 			</div>
+			<Modal onHide={() => setModal(false)} show={modal}>
+				<Modal.Header closeButton>Save Drawing</Modal.Header>
+				<Modal.Body>
+					<Formik
+						initialValues={{
+							name: '',
+							data: ''
+						}}
+						onSubmit={async (values) => {
+							try {
+								await saveCanvasData(values);
+								await SweetAlert.fire({
+									position: 'top-end',
+									icon: 'success',
+									title: 'Created Succesfully',
+									showConfirmButton: false,
+									timer: 1000,
+								});
+								navigate('/');
+							} catch (error) {
+								console.error(error);
+								await SweetAlert.fire({
+									position: 'top-end',
+									icon: 'error',
+									title: 'Server Error',
+									showConfirmButton: false,
+									timer: 1500,
+								});
+							}
+						}}
+					>
+						<Form id="formRoom">
+							<label className="form-label">Drawing Name:</label>
+							<Field
+								type="text"
+								name="name"
+								className="form-control"
+								placeholder="Drawing Name"
+							/>
+							
+						</Form>
+					</Formik>
+				</Modal.Body>
+				<Modal.Footer>
+					<Button onClick={() => setModal(false)} variant="secondary">
+						Close
+					</Button>
+					<Button type="submit" form="formRoom">
+						Save
+					</Button>
+				</Modal.Footer>
+			</Modal>
 		</div>
 	);
 }

@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import Message from '../../atoms/Message';
 import React from 'react';
+import { useState } from 'react';
 
-export default function MessageCard({ messages }) {
+export default function MessageCard({ messages, sendAction,username}) {
+	const [auxMessage, setAux] = useState(null);
 	return (
 		<div
 			className="p-3 d-flex flex-column justify-content-between"
@@ -13,7 +15,13 @@ export default function MessageCard({ messages }) {
 				height: '100%',
 			}}
 		>
-			<div style={{overflow:'scroll',heigth:'80%',overflowX:'hidden'}}>
+			<div
+				style={{
+					overflow: 'scroll',
+					heigth: '80%',
+					overflowX: 'hidden',
+				}}
+			>
 				{messages.map((message, index) => {
 					return (
 						<>
@@ -26,16 +34,25 @@ export default function MessageCard({ messages }) {
 					);
 				})}
 			</div>
-			<div className="p-1 mt-2" style={{height:'5%'}}>
+			<div className="p-1 mt-2" style={{ height: '5%' }}>
 				<div className="input-group">
 					<input
 						type="text"
 						className="form-control"
 						placeholder="Enviar"
+						value={auxMessage}
+						onChange={(e) => setAux(e.target.value)}
 					/>
 					<button
 						className="btn btn-outline-secondary btn-warning"
 						type="button"
+						onClick={() => {
+							if(auxMessage==='')return
+							sendAction(() => {
+								return { user: username, message: auxMessage };
+							});
+							setAux('');
+						}}
 					>
 						<p style={{ color: '#fff', margin: '0' }}>Enviar</p>
 					</button>
@@ -46,5 +63,5 @@ export default function MessageCard({ messages }) {
 }
 
 MessageCard.propTypes = {
-	messages: PropTypes.array.isRequired,
+	messages: PropTypes.array,
 };

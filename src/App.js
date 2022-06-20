@@ -1,11 +1,20 @@
 import React from "react";
 import { Routes, Route } from 'react-router-dom';
 import Game from './components/pages/Game';
-import CanvasTest from "./components/pages/CanvasTest";
+import Lobby from "./components/pages/Lobby";
 import "./style.css";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
+import Drawings from "./components/pages/Drawings";
 import { getToken } from "./utils/actionsAPI";
+import { ApolloProvider,InMemoryCache } from "@apollo/react-hooks";
+import { ApolloClient } from "@apollo/client";
+
+const client = new ApolloClient({
+	uri: 'http://localhost:8000/graphql/',
+	credentials: 'include',
+	cache: new InMemoryCache()
+})
 
 export default function App() {
 	const submit = async (values)=>{
@@ -21,33 +30,29 @@ export default function App() {
 	}
 
 	return (
-		<div className="app">
-			<Routes>
-				<Route path="/login" element={
-					<div className="p-5">
-						<div className="card p-4">
-							<Login handleSubmit={submit}/>
+		<ApolloProvider client={client}>
+			<div className="app">
+				<Routes>
+					<Route path="/login" element={
+						<div className="p-5">
+							<div className="card p-4">
+								<Login handleSubmit={submit}/>
+							</div>
 						</div>
-					</div>
-				} />
-				<Route path="/register" element={
-					<div className="p-5">
-						<h2 className="text-center" style={{color: "#fff"}}>Register</h2>
-						<div className="card p-4">
-							<Register/>
+					} />
+					<Route path="/register" element={
+						<div className="p-5">
+							<h2 className="text-center" style={{color: "#fff"}}>Register</h2>
+							<div className="card p-4">
+								<Register/>
+							</div>
 						</div>
-					</div>
-				} />
-				<Route path="/" element={
-					<div className="">
-						<h2 className="text-center" style={{color:"#fff"}}>On real time canvas under Development</h2>
-						<div className="d-flex justify-content-center ">
-							<CanvasTest/>
-						</div>
-					</div>
-				}/>
-				<Route path="/game" element={<Game />}/>
-			</Routes>
-		</div>
+					} />
+					<Route path="/drawings" element={<Drawings/>} />
+					<Route path="/" element={<Lobby/>}/>
+					<Route path="/game" element={<Game />}/>
+				</Routes>
+			</div>
+		</ApolloProvider>
 	);
 }

@@ -1,43 +1,25 @@
 import Canvas from '../../atoms/canvas';
-import Players from '../../molecules/Players';
 import MessageCard from '../../molecules/MessageCard';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useLocation } from "react-router-dom";
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-const example = [
-	{ name: 'Kevin', score: 0, isUser: false },
-	{ name: 'Kevin', score: 0, isUser: true },
-	{ name: 'Kevin', score: 0, isUser: false },
-];
+export default function Game() {
+	const {state} = useLocation();
+	const [message,setMessage] = useState(null)
+	const [receivedMessages,setMessages] = useState([]);
 
-const messages = [
-	{
-		user: 'Kevin',
-		message:
-			'Hola amigos este como estan? lorem  hola adios hola adios hola adios hola adios',
-	},
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-	{ user: 'Kevin', message: 'Hola amigos este como estan?' },
-];
+	useEffect(()=>{
+		if(!message) return 
+		setMessages((prev)=>{
+			prev = [...prev,message]
+			return prev
+		})
+	},[message])
 
-export default function Game({ room }) {
+
 	return (
 		<div className="container-fluid" style={{ height: '100%' }}>
 			<div className="row">
@@ -46,19 +28,17 @@ export default function Game({ room }) {
 				<div className="col " style={{ textAlign: 'center' }}>
 					<p style={{ color: '#fff' }}>
 						<span style={{ fontWeight: 'bold' }}>Room ID:</span>{' '}
-						{room}
+						{state.room}
 					</p>
 				</div>
 			</div>
 			<div className="row p-5" style={{ height: '90%' }}>
-				<div className="col-2">
-					<Players players={example} />
-				</div>
+				
 				<div className="col-6">
-					<Canvas objeto={'Patito de Goma'} />
+					<Canvas setMessages={setMessages} message={message} roomID={state.room} objeto={'Patito de Goma'} />
 				</div>
 				<div className="col-4" style={{ height: '100%' }}>
-					<MessageCard messages={messages} />
+					<MessageCard username={state.username}  sendAction={setMessage} messages={receivedMessages} />
 				</div>
 			</div>
 		</div>
@@ -66,5 +46,5 @@ export default function Game({ room }) {
 }
 
 Game.propTypes = {
-	room: PropTypes.string.isRequired,
+	room: PropTypes.string,
 };
