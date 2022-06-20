@@ -90,6 +90,7 @@ CORS_ALLOW_METHODS = [
 'POST',
 'PUT',
 ]
+ALLOWED_HOSTS = ['*']
 
 AUTHENTICATION_BACKENDS = [
     'graphql_jwt.backends.JSONWebTokenBackend',
